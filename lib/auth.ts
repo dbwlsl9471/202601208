@@ -1,7 +1,7 @@
-import { createHmac, scryptSync, timingSafeEqual } from 'node:crypto'
+import { createHash, createHmac, scryptSync, timingSafeEqual } from 'node:crypto'
 import { cookies } from 'next/headers'
 
-// 관리자 한 명(환경 변수의 ADMIN_ID / ADMIN_PASSWORD_HASH)만 로그인한다.
+// 관리자 한 명(환경 변수의 ADMIN_ID / ADMIN_PASSWORD 또는 ADMIN_PASSWORD_HASH)만 로그인한다.
 // 비밀번호는 서버에서만 확인하고, 브라우저에는 서명된 쿠키만 남는다.
 
 export const SESSION_COOKIE = 'pd_session'
@@ -15,7 +15,7 @@ function secret(): string | null {
 }
 
 export function authConfigured(): boolean {
-  return Boolean(process.env.ADMIN_ID && process.env.ADMIN_PASSWORD_HASH && secret())
+  return Boolean(process.env.ADMIN_ID && (process.env.ADMIN_PASSWORD_HASH || process.env.ADMIN_PASSWORD) && secret())
 }
 
 function sign(payload: string, key: string): string {
@@ -64,12 +64,19 @@ export function verifyPassword(password: string, stored: string): boolean {
   return timingSafeEqual(actual, expected)
 }
 
+// 비밀번호를 그대로 넣은 경우(Vercel의 Sensitive 환경 변수 등). 길이가 새지 않게 해시끼리 비교한다
+function samePlain(password: string, stored: string): boolean {
+  const digest = (s: string) => createHash('sha256').update(s).digest()
+  return timingSafeEqual(digest(password), digest(stored))
+}
+
 export function checkCredentials(id: string, password: string): boolean {
   const adminId = process.env.ADMIN_ID
   const hash = process.env.ADMIN_PASSWORD_HASH
-  if (!adminId || !hash) return false
+  const plain = process.env.ADMIN_PASSWORD
+  if (!adminId || (!hash && !plain)) return false
   const idOk = safeEqual(id, adminId)
-  const pwOk = verifyPassword(password, hash)
+  const pwOk = hash ? verifyPassword(password, hash) : samePlain(password, plain as string)
   return idOk && pwOk
 }
 
