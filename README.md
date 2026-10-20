@@ -31,7 +31,6 @@
    |---|---|
    | `ADMIN_ID` ★ | 관리자 아이디 |
    | `ADMIN_PASSWORD` ★ | 관리자 비밀번호(12자 이상 권장) |
-   | `SESSION_SECRET` ★ | 32자 이상 임의 문자열. 로그인 쿠키 서명용 |
    | `SUPABASE_SERVICE_ROLE_KEY` ★ | 1번의 secret 키 |
    | `SUPABASE_URL` | `https://<프로젝트 ref>.supabase.co` |
    | `ADMIN_NAME` | 저장 기록에 남길 이름(예: 임유진) |
@@ -39,13 +38,13 @@
    비밀번호 원문 대신 해시를 넣고 싶으면 `npm run hash-password`로 만든 값을 `ADMIN_PASSWORD_HASH`에 넣습니다(둘 다 있으면 해시를 씁니다).
 3. 배포 주소에서 **관리자 로그인** → 데이터 관리 탭에서 포털 원본을 올립니다. 첫 저장 전까지는 `public/dashboard/dashboard-data.json`(초기 데이터)을 보여 줍니다.
 
-환경 변수를 바꾼 뒤에는 Vercel에서 Redeploy해야 적용됩니다. `SESSION_SECRET`을 바꾸면 로그인된 화면이 모두 로그아웃됩니다.
+환경 변수를 바꾼 뒤에는 Vercel에서 Redeploy해야 적용됩니다. 로그인 쿠키 서명 키는 비밀번호와 Supabase 키에서 만들어지므로, 비밀번호를 바꾸면 로그인된 화면이 모두 로그아웃됩니다. 따로 정하고 싶으면 `SESSION_SECRET`(32자 이상)을 넣습니다.
 Supabase 설정이 없으면 배포본은 초기 데이터만 보여 주는 보기 전용이 됩니다.
 
 ## 내 컴퓨터에서 실행
 
 ```bash
-cp .env.example .env.local   # ADMIN_ID, ADMIN_PASSWORD, SESSION_SECRET만 채워도 됩니다
+cp .env.example .env.local   # ADMIN_ID, ADMIN_PASSWORD만 채워도 됩니다
 npm run dev                  # http://localhost:3000
 ```
 Supabase 값이 없으면 개발 중에는 `.data/dashboard.json`에 저장합니다.

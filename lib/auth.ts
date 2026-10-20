@@ -9,10 +9,18 @@ const SESSION_HOURS = 12
 
 export type Session = { sub: string; exp: number }
 
+// 쿠키 서명 키. SESSION_SECRET이 없으면 서버 전용 비밀값(Supabase 키·비밀번호)에서 만든다.
+// 이 경우 비밀번호를 바꾸면 로그인된 화면이 모두 로그아웃된다.
 function secret(): string | null {
   const s = process.env.SESSION_SECRET
-  return s && s.length >= 32 ? s : null
+  if (s) return s.length >= 32 ? s : null
+  const base = [process.env.ADMIN_PASSWORD_HASH || process.env.ADMIN_PASSWORD, process.env.SUPABASE_SERVICE_ROLE_KEY].filter(Boolean).join('|')
+  if (!base) return null
+  // scrypt로 늘려서 쿠키 하나로 비밀번호를 대입해 보기 어렵게 한다(값은 한 번만 계산)
+  if (derived?.base !== base) derived = { base, key: scryptSync(base, 'pension-dashboard-session', 32).toString('base64url') }
+  return derived.key
 }
+let derived: { base: string; key: string } | null = null
 
 export function authConfigured(): boolean {
   return Boolean(process.env.ADMIN_ID && (process.env.ADMIN_PASSWORD_HASH || process.env.ADMIN_PASSWORD) && secret())

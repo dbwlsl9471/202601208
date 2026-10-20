@@ -17,7 +17,7 @@ export default async function LoginPage() {
           <LoginForm />
         ) : (
           <p className="mt-5 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800 dark:bg-amber-950 dark:text-amber-200">
-            관리자 계정이 아직 설정되지 않았습니다. 배포 설정에 ADMIN_ID, ADMIN_PASSWORD(또는 ADMIN_PASSWORD_HASH), SESSION_SECRET을 넣어 주세요.
+            관리자 계정이 아직 설정되지 않았습니다. 배포 설정에 ADMIN_ID와 ADMIN_PASSWORD를 넣어 주세요.
           </p>
         )}
         <a href="/" className="mt-5 inline-block text-sm text-slate-500 underline-offset-2 hover:underline dark:text-slate-400">
