@@ -1,0 +1,24 @@
+{
+  "name": "pension-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "sync": "node scripts/sync-dashboard.mjs",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "hash-password": "node scripts/hash-password.mjs"
+  },
+  "dependencies": {
+    "next": "16.4.2",
+    "react": "19.2.9",
+    "react-dom": "19.2.9"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.13",
+    "@types/node": "^22.18.1",
+    "@types/react": "^19.1.12",
+    "tailwindcss": "^4.1.13",
+    "typescript": "^5.9.2"
+  }
+}
